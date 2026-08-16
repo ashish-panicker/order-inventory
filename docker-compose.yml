@@ -1,16 +1,32 @@
 version: '3.8'
 
 services:
-  db:
+  order_db:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: order_db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: order_inventory
+      MYSQL_DATABASE: order_db
       MYSQL_USER: dbuser
       MYSQL_PASSWORD: dbpassword
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql_data:/var/lib/mysql
+      - ./order_db_data:/var/lib/mysql
+      - ./order-service/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    restart: unless-stopped
+
+  inventory_db:
+    image: mysql:8.0
+    container_name: inventory_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: inventory_db
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpassword
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./inventory_db_data:/var/lib/mysql
+      - ./inventory-service/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     restart: unless-stopped
