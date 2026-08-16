@@ -1,5 +1,0 @@
-Introduction to Microservices
-Introduction to Monolithic Architecture, Definition & Characteristics, Architecture components, Drawbacks, Introduction to Microservices, Definition & Characteristics, Architecture, Benefits, Drawbacks, Monolithic VS Microservice Architecture
-
-Microservices Use Cases	
-Scenarios where microservices are beneficial, Scalability, Flexibility and Agility, Fault Isolation, Polyglot Persistence, Resilliance and High Availability, Realtime application that leverage Microservice architecture, Example (Netflix, Uber, Slack, Airbnb, Spotify)
