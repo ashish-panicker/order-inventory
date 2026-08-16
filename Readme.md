@@ -192,10 +192,10 @@ Manages the lifecycle of customer orders.
 
 ## Inter-Service Communication Flow (Synchronous Example)
 
-1. **Client** sends `POST /api/v1/orders` to `order-service`.
-2. `order-service` validates the request.
-3. `order-service` acts as an HTTP client and sends a synchronous `POST /api/v1/inventory/deduct` request to `inventory-service`.
-4. `inventory-service` processes the deduction:
-   * **If success**: Returns `200 OK`. `order-service` then saves the order to its DB with status `CREATED` and returns `201 Created` to the client.
-   * **If insufficient stock**: Returns `400 Bad Request`. `order-service` aborts order creation and returns `400 Bad Request` to the client.
-   * **If down/timeout**: `order-service`'s Circuit Breaker trips. `order-service` returns `503 Service Unavailable` or gracefully falls back.
+1. **Client** sends `POST /api/v1/orders/place-order` to `order-service`.
+2. `order-service` validates the request payload.
+3. `order-service` acts as an HTTP client and sends a synchronous `GET /api/v1/inventory/stock/{productId}` request to `inventory-service` to check stock availability, followed by a `PUT /api/v1/inventory/stock/{productId}` to reserve the stock.
+4. `inventory-service` processes the requests:
+   * **If stock is sufficient and updated successfully**: Returns `200 OK`. `order-service` saves the order to its DB with status `CONFIRMED` and returns `201 Created` to the client.
+   * **If insufficient stock or product not found**: Returns `400 Bad Request` or `404 Not Found`. `order-service` aborts the order and returns the corresponding error to the client.
+   * **If down/timeout**: `order-service`'s Circuit Breaker trips. `order-service` returns `503 Service Unavailable` and does not persist the order.
