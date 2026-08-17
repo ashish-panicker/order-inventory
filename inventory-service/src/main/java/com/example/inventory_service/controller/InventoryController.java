@@ -1,0 +1,46 @@
+package com.example.inventory_service.controller;
+
+import com.example.inventory_service.common.dto.ApiResponse;
+import com.example.inventory_service.common.dto.PaginatedResponse;
+import com.example.inventory_service.dto.AddStockRequest;
+import com.example.inventory_service.dto.DeductStockRequest;
+import com.example.inventory_service.dto.InventoryResponse;
+import com.example.inventory_service.service.InventoryService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/inventory")
+@RequiredArgsConstructor
+public class InventoryController {
+
+    private final InventoryService inventoryService;
+
+    @GetMapping("/{productId}")
+    public ApiResponse<InventoryResponse> getStockInfo(@PathVariable String productId) {
+        return ApiResponse.success(inventoryService.getStockInfo(productId));
+    }
+
+    @GetMapping
+    public PaginatedResponse<InventoryResponse> listInventory(Pageable pageable) {
+        Page<InventoryResponse> page = inventoryService.listInventory(pageable);
+        return PaginatedResponse.of(page);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse<InventoryResponse> addStock(@Valid @RequestBody AddStockRequest request) {
+        return ApiResponse.success(inventoryService.addStock(request));
+    }
+
+    @PutMapping("/{productId}/deduct")
+    public ApiResponse<InventoryResponse> deductStock(
+            @PathVariable String productId,
+            @Valid @RequestBody DeductStockRequest request) {
+        return ApiResponse.success(inventoryService.deductStock(productId, request));
+    }
+}
