@@ -12,8 +12,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./order_db_data:/var/lib/mysql
-      - ./order-service/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./data/order_db_data:/var/lib/mysql:z
+      - ./order-service/schema.sql:/docker-entrypoint-initdb.d/schema.sql:z
     restart: unless-stopped
 
   inventory_db:
@@ -27,6 +27,6 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - ./inventory_db_data:/var/lib/mysql
-      - ./inventory-service/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./data/inventory_db_data:/var/lib/mysql:z
+      - ./inventory-service/schema.sql:/docker-entrypoint-initdb.d/schema.sql:z
     restart: unless-stopped

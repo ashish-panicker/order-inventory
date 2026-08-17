@@ -199,3 +199,27 @@ Manages the lifecycle of customer orders.
    * **If stock is sufficient and updated successfully**: Returns `200 OK`. `order-service` saves the order to its DB with status `CONFIRMED` and returns `201 Created` to the client.
    * **If insufficient stock or product not found**: Returns `400 Bad Request` or `404 Not Found`. `order-service` aborts the order and returns the corresponding error to the client.
    * **If down/timeout**: `order-service`'s Circuit Breaker trips. `order-service` returns `503 Service Unavailable` and does not persist the order.
+
+---
+
+## 6. Troubleshooting Docker Volumes & Permissions
+
+During the initial setup, the MySQL Docker containers experienced a continuous crash-loop where they would start and immediately fail.
+
+### Why were the containers crashing?
+The `docker-compose.yml` was configured to bind-mount the database data to local directories (`./data/order_db_data` and `./data/inventory_db_data`). On Linux distributions that use **SELinux** (Security-Enhanced Linux), the OS aggressively enforces access control. Because Docker containers run in their own isolated security context, SELinux blocked the MySQL processes (running inside the containers) from reading or writing to the mapped host directories.
+
+This resulted in `Permission denied` errors inside the MySQL container logs, causing the databases to crash and restart in an infinite loop.
+
+### The Fix: The `:z` Flag
+To resolve this permission issue, the `:z` flag was appended to the volume declarations in `docker-compose.yml`:
+```yaml
+volumes:
+  - ./data/order_db_data:/var/lib/mysql:z
+```
+
+**What does the `:z` flag do?**
+* **On SELinux systems (Fedora, RHEL, CentOS):** It instructs Docker to automatically "relabel" the SELinux security context of the mapped directory on the host. This securely grants the container the necessary permissions to read and write to those files.
+* **On Non-SELinux systems (Windows, macOS, Ubuntu, Debian):** Docker simply ignores the `:z` flag. It causes no harm and behaves identically to a standard volume mount.
+
+By including the `:z` flag, the `docker-compose.yml` remains truly cross-platform. It acts as a safety net for Linux environments while remaining completely transparent to developers on Windows or Mac.
