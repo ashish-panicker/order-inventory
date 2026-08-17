@@ -27,6 +27,8 @@ import static org.mockito.Mockito.*;
  * OrderServiceImplTest class.
  * Unit tests for the Order service implementation.
  */
+
+// mvn clean install -DskipTests
 class OrderServiceImplTest {
 
     @Mock

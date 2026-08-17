@@ -2,6 +2,7 @@ package com.example.order_service.service.impl;
 
 import com.example.order_service.common.exception.ResourceNotFoundException;
 import com.example.order_service.dto.CreateOrderRequest;
+import com.example.order_service.dto.OrderItemRequest;
 import com.example.order_service.dto.OrderResponse;
 import com.example.order_service.entity.Order;
 import com.example.order_service.entity.OrderItem;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,7 +35,10 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse placeOrder(CreateOrderRequest request) {
         // NOTE: Stub for Inter-Service call to deduct stock.
         // Assuming stock deduction succeeds for now.
-        
+
+        List<OrderItemRequest> orderItemRequestList = request.items();
+
+
         Order order = new Order();
         order.setOrderId(UUID.randomUUID().toString());
         order.setCustomerId(request.customerId());
