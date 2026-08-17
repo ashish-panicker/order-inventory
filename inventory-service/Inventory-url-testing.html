@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - API Documentation</title>
+    <style>
+        body { margin: 0; padding: 0; }
+        #opencollection-container { width: 100vw; height: 100vh; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.usebruno.com/api-docs/api-docs.css">
+    <script src="https://cdn.usebruno.com/api-docs/api-docs.js"></script>
+</head>
+<body>
+    <div id="opencollection-container"></div>
+    <script>
+        const collectionData = "opencollection: 1.0.0\ninfo:\n  name: Inventory\nconfig:\n  proxy:\n    inherit: true\n    config:\n      protocol: http\n      hostname: ''\n      port: ''\n      auth:\n        username: ''\n        password: ''\n      bypassProxy: ''\nitems:\n  - info:\n      name: List All inventory\n      type: http\n      seq: 1\n    http:\n      method: GET\n      url: http://localhost:8082/api/v1/inventory\n      auth: inherit\n    settings:\n      encodeUrl: true\n      timeout: 0\n      followRedirects: true\n      maxRedirects: 5\n  - info:\n      name: List one stock\n      type: http\n      seq: 2\n    http:\n      method: GET\n      url: http://localhost:8082/api/v1/inventory/PROD-10\n      auth: inherit\n    settings:\n      encodeUrl: true\n      timeout: 0\n      followRedirects: true\n      maxRedirects: 5\n  - info:\n      name: Create stock\n      type: http\n      seq: 3\n    http:\n      method: POST\n      url: http://localhost:8082/api/v1/inventory\n      body:\n        type: json\n        data: |-\n          {\n            \"productId\":\"PROD-10\",\n            \"quantityToAdd\": 10\n          }\n      auth: inherit\n    settings:\n      encodeUrl: true\n      timeout: 0\n      followRedirects: true\n      maxRedirects: 5\n  - info:\n      name: Deduct Stock\n      type: http\n      seq: 4\n    http:\n      method: PUT\n      url: http://localhost:8082/api/v1/inventory/PROD-10/deduct\n      body:\n        type: json\n        data: |-\n          {\n            \"quantity\": 3\n          }\n      auth: inherit\n    settings:\n      encodeUrl: true\n      timeout: 0\n      followRedirects: true\n      maxRedirects: 5\n  - info:\n      name: Delete Stock\n      type: http\n      seq: 5\n    http:\n      method: DELETE\n      url: http://localhost:8082/api/v1/inventory/PROD-10\n      auth: inherit\n    settings:\n      encodeUrl: true\n      timeout: 0\n      followRedirects: true\n      maxRedirects: 5\nbundled: true\nextensions:\n  bruno:\n    ignore:\n      - node_modules\n      - .git\n    exportedAt: '2026-08-17T10:26:30.745Z'\n    exportedUsing: Bruno/4.0.0\n";
+        new window.OpenCollection({
+            target: document.getElementById('opencollection-container'),
+            opencollection: collectionData,
+            theme: 'light'
+        });
+    </script>
+</body>
+</html>
