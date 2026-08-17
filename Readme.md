@@ -77,6 +77,7 @@ Microservices can communicate synchronously or asynchronously.
 All services return errors in the following standard JSON format:
 ```json
 {
+  "success": false,
   "timestamp": "string (ISO-8601)",
   "status": "integer (HTTP status code)",
   "error": "string (Short error type)",
@@ -85,13 +86,85 @@ All services return errors in the following standard JSON format:
 }
 ```
 
+### Common Success Schema
+For a single resource or non-paginated data:
+```json
+{
+  "success": true,
+  "data": { ... }
+}
+```
+
+### Paginated Response Schema
+For lists of resources:
+```json
+{
+  "success": true,
+  "data": [ ... ],
+  "meta": {
+    "page": "integer",
+    "size": "integer",
+    "totalElements": "integer",
+    "totalPages": "integer",
+    "sort": "string"
+  }
+}
+```
+
 ### A. Inventory Service API (`/api/v1/inventory`)
 
 Manages product stock operations.
 
-#### 1. Add New Stock
-* **Endpoint**: `POST /api/v1/inventory/stock`
-* **Description**: Initializes or adds stock for a product.
+#### 1. Retrieve Stock Information
+* **Endpoint**: `GET /api/v1/inventory/{productId}`
+* **Description**: Gets the current stock details for a specific product.
+* **Response Schema (200 OK)**:
+```json
+{
+  "success": true,
+  "data": {
+    "productId": "string",
+    "quantity": "integer",
+    "inStock": "boolean",
+    "lastUpdated": "string (ISO-8601)"
+  }
+}
+```
+* **Error Responses**:
+  * `404 Not Found`: Product ID does not exist.
+
+#### 2. List Inventory
+* **Endpoint**: `GET /api/v1/inventory`
+* **Description**: Returns all products and their stock levels.
+* **Query Parameters**:
+  * `page` (optional, default: 0): Page number (0-indexed).
+  * `size` (optional, default: 10): Number of records per page.
+  * `sort` (optional, default: `productId,asc`): Sorting criteria.
+* **Response Schema (200 OK)**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "productId": "string",
+      "quantity": "integer",
+      "inStock": "boolean",
+      "lastUpdated": "string (ISO-8601)"
+    }
+  ],
+  "meta": {
+    "page": 0,
+    "size": 10,
+    "totalElements": 50,
+    "totalPages": 5,
+    "sort": "productId,asc"
+  }
+}
+```
+
+#### 3. Add Product
+* **Endpoint**: `POST /api/v1/inventory`
+* **Description**: Initializes stock for a new product.
 * **Request Schema**:
 ```json
 {
@@ -100,40 +173,25 @@ Manages product stock operations.
 }
 ```
 * **Success Responses**:
-  * `201 Created`: Stock successfully added/initialized.
+  * `201 Created`: Stock successfully added/initialized. Response includes the added product wrapped in the Common Success Schema.
 * **Error Responses**:
   * `400 Bad Request`: Invalid input (e.g., negative quantity, missing productId).
   * `500 Internal Server Error`: Database connection failure.
 
-#### 2. Update Stock Quantity
-* **Endpoint**: `PUT /api/v1/inventory/stock/{productId}`
-* **Description**: Replaces the current stock quantity for an existing product.
+#### 4. Deduct Stock
+* **Endpoint**: `PUT /api/v1/inventory/{productId}/deduct`
+* **Description**: Decreases the stock count. The Order Service calls this when an order is created.
 * **Request Schema**:
 ```json
 {
-  "newQuantity": "integer (required, min 0)"
+  "quantity": "integer (required, min 1)"
 }
 ```
 * **Success Responses**:
-  * `200 OK`: Stock updated successfully.
+  * `200 OK`: Stock deducted successfully. Response wrapped in the Common Success Schema.
 * **Error Responses**:
-  * `400 Bad Request`: Invalid quantity provided.
+  * `400 Bad Request`: Invalid quantity provided or insufficient stock.
   * `404 Not Found`: Product ID does not exist in inventory.
-
-#### 3. Retrieve Stock Information
-* **Endpoint**: `GET /api/v1/inventory/stock/{productId}`
-* **Description**: Gets the current stock details for a specific product.
-* **Response Schema (200 OK)**:
-```json
-{
-  "productId": "string",
-  "quantity": "integer",
-  "inStock": "boolean",
-  "lastUpdated": "string (ISO-8601)"
-}
-```
-* **Error Responses**:
-  * `404 Not Found`: Product ID does not exist.
 
 ---
 
@@ -141,9 +199,9 @@ Manages product stock operations.
 
 Manages the lifecycle of customer orders.
 
-#### 1. Place a New Order
-* **Endpoint**: `POST /api/v1/orders/place-order`
-* **Description**: Submits a new order. The service validates inventory synchronously before confirming.
+#### 1. Create Order
+* **Endpoint**: `POST /api/v1/orders`
+* **Description**: Places a new order. The service validates inventory synchronously before confirming.
 * **Request Schema**:
 ```json
 {
@@ -158,43 +216,65 @@ Manages the lifecycle of customer orders.
 }
 ```
 * **Success Responses**:
-  * `201 Created`: Order placed successfully and stock reserved. Response includes new `orderId`.
+  * `201 Created`: Order placed successfully and stock reserved. Response includes new `orderId` wrapped in the Common Success Schema.
 * **Error Responses**:
   * `400 Bad Request`: Invalid payload or insufficient stock (propagated from Inventory service).
   * `503 Service Unavailable`: Inventory service is unreachable (Circuit Breaker opened).
 
-#### 2. Check Order Status
-* **Endpoint**: `GET /api/v1/orders/status/{orderId}`
-* **Description**: Fetches the current status of an existing order.
+#### 2. Get Order Details
+* **Endpoint**: `GET /api/v1/orders/{orderId}`
+* **Description**: Retrieves the status and details of a specific order.
 * **Response Schema (200 OK)**:
 ```json
 {
-  "orderId": "string",
-  "status": "string (e.g., PENDING, CONFIRMED, CANCELLED)",
-  "totalAmount": "number (decimal)",
-  "createdAt": "string (ISO-8601)"
+  "success": true,
+  "data": {
+    "orderId": "string",
+    "status": "string (e.g., PENDING, CONFIRMED, CANCELLED)",
+    "totalAmount": "number (decimal)",
+    "createdAt": "string (ISO-8601)"
+  }
 }
 ```
 * **Error Responses**:
   * `404 Not Found`: The specified order ID does not exist.
 
-#### 3. Cancel an Order
-* **Endpoint**: `PUT /api/v1/orders/cancel/{orderId}`
-* **Description**: Cancels a previously placed order. (In a real system, this should trigger an inventory restoration).
-* **Request Schema**: Empty body.
-* **Success Responses**:
-  * `200 OK`: Order cancelled successfully.
-* **Error Responses**:
-  * `400 Bad Request`: Order is in a state that cannot be cancelled (e.g., already SHIPPED).
-  * `404 Not Found`: Order ID does not exist.
+#### 3. List Orders
+* **Endpoint**: `GET /api/v1/orders`
+* **Description**: Fetches a list of orders.
+* **Query Parameters**:
+  * `page` (optional, default: 0): Page number (0-indexed).
+  * `size` (optional, default: 10): Number of records per page.
+  * `sort` (optional, default: `createdAt,desc`): Sorting criteria.
+* **Response Schema (200 OK)**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "orderId": "string",
+      "status": "string",
+      "totalAmount": "number",
+      "createdAt": "string"
+    }
+  ],
+  "meta": {
+    "page": 0,
+    "size": 10,
+    "totalElements": 150,
+    "totalPages": 15,
+    "sort": "createdAt,desc"
+  }
+}
+```
 
 ---
 
 ## Inter-Service Communication Flow (Synchronous Example)
 
-1. **Client** sends `POST /api/v1/orders/place-order` to `order-service`.
+1. **Client** sends `POST /api/v1/orders` to `order-service`.
 2. `order-service` validates the request payload.
-3. `order-service` acts as an HTTP client and sends a synchronous `GET /api/v1/inventory/stock/{productId}` request to `inventory-service` to check stock availability, followed by a `PUT /api/v1/inventory/stock/{productId}` to reserve the stock.
+3. `order-service` acts as an HTTP client and sends a synchronous `GET /api/v1/inventory/{productId}` request to `inventory-service` to check stock availability, followed by a `PUT /api/v1/inventory/{productId}/deduct` to reserve the stock.
 4. `inventory-service` processes the requests:
    * **If stock is sufficient and updated successfully**: Returns `200 OK`. `order-service` saves the order to its DB with status `CONFIRMED` and returns `201 Created` to the client.
    * **If insufficient stock or product not found**: Returns `400 Bad Request` or `404 Not Found`. `order-service` aborts the order and returns the corresponding error to the client.
