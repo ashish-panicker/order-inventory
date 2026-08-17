@@ -15,4 +15,5 @@ public interface InventoryService {
     Page<InventoryResponse> listInventory(Pageable pageable);
     InventoryResponse addStock(AddStockRequest request);
     InventoryResponse deductStock(String productId, DeductStockRequest request);
+    void deleteInventory(String productId);
 }

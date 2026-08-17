@@ -72,4 +72,12 @@ public class InventoryServiceImpl implements InventoryService {
         InventoryItem saved = inventoryRepository.save(item);
         return inventoryMapper.toResponse(saved);
     }
+
+    @Override
+    @Transactional
+    public void deleteInventory(String productId) {
+        InventoryItem item = inventoryRepository.findByProductId(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product ID does not exist in inventory"));
+        inventoryRepository.delete(item);
+    }
 }

@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/inventory")
+@RequestMapping("/inventory")
 @RequiredArgsConstructor
 /**
  * InventoryController class.
@@ -51,5 +51,12 @@ public class InventoryController {
             @PathVariable String productId,
             @Valid @RequestBody DeductStockRequest request) {
         return ApiResponse.success(inventoryService.deductStock(productId, request));
+    }
+
+    @DeleteMapping("/{productId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ApiResponse<Void> deleteInventory(@PathVariable String productId) {
+        inventoryService.deleteInventory(productId);
+        return ApiResponse.success(null, "Inventory deleted successfully");
     }
 }
