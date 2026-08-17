@@ -1,5 +1,9 @@
 package com.example.order_service.common.dto;
 
+/**
+ * ApiErrorResponse record.
+ * Data Transfer Object representing a ApiErrorResponse payload.
+ */
 public record ApiErrorResponse(
     boolean success,
     String timestamp,

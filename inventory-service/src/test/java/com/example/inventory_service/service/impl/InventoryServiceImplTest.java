@@ -19,6 +19,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+/**
+ * InventoryServiceImplTest class.
+ * Unit tests for the Inventory service implementation.
+ */
 class InventoryServiceImplTest {
 
     @Mock

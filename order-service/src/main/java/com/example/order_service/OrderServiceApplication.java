@@ -7,6 +7,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
+/**
+ * OrderServiceApplication class.
+ * Main Spring Boot application entry point for the OrderService microservice.
+ */
 public class OrderServiceApplication {
 
 	public static void main(String[] args) {

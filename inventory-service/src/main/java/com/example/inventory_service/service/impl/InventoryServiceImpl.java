@@ -16,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+/**
+ * InventoryServiceImpl class.
+ * Implementation of the business logic for Inventory management.
+ */
 public class InventoryServiceImpl implements InventoryService {
 
     private final InventoryRepository inventoryRepository;

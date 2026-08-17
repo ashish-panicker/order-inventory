@@ -3,6 +3,10 @@ package com.example.inventory_service.common.dto;
 import java.util.List;
 import org.springframework.data.domain.Page;
 
+/**
+ * PaginatedResponse record.
+ * Data Transfer Object representing a PaginatedResponse payload.
+ */
 public record PaginatedResponse<T>(
     boolean success,
     List<T> data,

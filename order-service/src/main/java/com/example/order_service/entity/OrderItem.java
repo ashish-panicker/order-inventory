@@ -11,6 +11,10 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * OrderItem class.
+ * Represents a OrderItem entity in the domain model.
+ */
 public class OrderItem {
 
     @Id

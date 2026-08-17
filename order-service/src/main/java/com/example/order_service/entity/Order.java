@@ -12,12 +12,20 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
+// Enables soft delete: overrides the default DELETE SQL to update the is_deleted flag instead.
+// This preserves historical data and avoids physical deletion from the database.
 @SQLDelete(sql = "UPDATE orders SET is_deleted = true WHERE id=?")
+// Automatically applies a WHERE clause to all SELECT queries to filter out soft-deleted records.
+// This ensures that deleted orders are hidden from standard application queries.
 @SQLRestriction("is_deleted=false")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * Order class.
+ * Represents a Order entity in the domain model.
+ */
 public class Order extends BaseEntity {
 
     @Id

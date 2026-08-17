@@ -26,6 +26,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(OrderController.class)
+/**
+ * OrderControllerTest class.
+ * Integration tests for the Order REST API endpoints.
+ */
 class OrderControllerTest {
 
     @Autowired

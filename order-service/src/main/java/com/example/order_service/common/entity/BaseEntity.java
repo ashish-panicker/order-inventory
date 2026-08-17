@@ -11,6 +11,10 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+/**
+ * BaseEntity class.
+ * Base JPA entity containing common fields like ID, createdAt, and updatedAt.
+ */
 public abstract class BaseEntity {
 
     @CreatedDate

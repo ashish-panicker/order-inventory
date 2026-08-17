@@ -23,6 +23,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+/**
+ * OrderServiceImplTest class.
+ * Unit tests for the Order service implementation.
+ */
 class OrderServiceImplTest {
 
     @Mock

@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/inventory")
 @RequiredArgsConstructor
+/**
+ * InventoryController class.
+ * REST Controller exposing API endpoints for managing Inventorys.
+ */
 public class InventoryController {
 
     private final InventoryService inventoryService;
@@ -25,6 +29,11 @@ public class InventoryController {
         return ApiResponse.success(inventoryService.getStockInfo(productId));
     }
 
+    /**
+     * Retrieves a paginated and sortable list of inventory items.
+     * Spring Data web support automatically translates request parameters (like page=0&size=20&sort=productId,asc)
+     * into a Pageable object, providing out-of-the-box pagination and sorting capabilities.
+     */
     @GetMapping
     public PaginatedResponse<InventoryResponse> listInventory(Pageable pageable) {
         Page<InventoryResponse> page = inventoryService.listInventory(pageable);

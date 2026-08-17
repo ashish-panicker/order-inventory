@@ -6,6 +6,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("h2")
+/**
+ * OrderServiceApplicationTests class.
+ * Context load tests for the OrderService application.
+ */
 class OrderServiceApplicationTests {
 
 	@Test

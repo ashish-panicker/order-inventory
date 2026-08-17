@@ -19,6 +19,10 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+/**
+ * OrderServiceImpl class.
+ * Implementation of the business logic for Order management.
+ */
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;

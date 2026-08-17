@@ -7,6 +7,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
+/**
+ * InventoryServiceApplication class.
+ * Main Spring Boot application entry point for the InventoryService microservice.
+ */
 public class InventoryServiceApplication {
 
 	public static void main(String[] args) {

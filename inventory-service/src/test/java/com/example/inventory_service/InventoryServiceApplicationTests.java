@@ -6,6 +6,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("h2")
+/**
+ * InventoryServiceApplicationTests class.
+ * Context load tests for the InventoryService application.
+ */
 class InventoryServiceApplicationTests {
 
 	@Test

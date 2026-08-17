@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
+/**
+ * OrderController class.
+ * REST Controller exposing API endpoints for managing Orders.
+ */
 public class OrderController {
 
     private final OrderService orderService;
@@ -30,6 +34,11 @@ public class OrderController {
         return ApiResponse.success(orderService.getOrderStatus(orderId));
     }
 
+    /**
+     * Retrieves a paginated and sortable list of orders.
+     * Clients can pass query parameters like ?page=0&size=10&sort=createdAt,desc to control pagination and filtering.
+     * Spring injects the Pageable instance populated with these parameters automatically.
+     */
     @GetMapping
     public PaginatedResponse<OrderResponse> listOrders(Pageable pageable) {
         Page<OrderResponse> page = orderService.listOrders(pageable);

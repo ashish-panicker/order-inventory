@@ -25,6 +25,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(InventoryController.class)
+/**
+ * InventoryControllerTest class.
+ * Integration tests for the Inventory REST API endpoints.
+ */
 class InventoryControllerTest {
 
     @Autowired

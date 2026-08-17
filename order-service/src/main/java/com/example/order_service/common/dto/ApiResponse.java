@@ -1,5 +1,9 @@
 package com.example.order_service.common.dto;
 
+/**
+ * ApiResponse record.
+ * Data Transfer Object representing a ApiResponse payload.
+ */
 public record ApiResponse<T>(
     boolean success,
     T data,

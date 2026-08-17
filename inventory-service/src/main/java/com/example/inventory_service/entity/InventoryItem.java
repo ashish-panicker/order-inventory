@@ -15,12 +15,20 @@ import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "inventory_items")
+// Enables soft delete: overrides the default DELETE SQL to update the is_deleted flag instead.
+// This preserves historical data and avoids physical deletion from the database.
 @SQLDelete(sql = "UPDATE inventory_items SET is_deleted = true WHERE id=?")
+// Automatically applies a WHERE clause to all SELECT queries to filter out soft-deleted records.
+// This ensures that deleted items are hidden from standard application queries.
 @SQLRestriction("is_deleted=false")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * InventoryItem class.
+ * Represents a InventoryItem entity in the domain model.
+ */
 public class InventoryItem extends BaseEntity {
 
     @Id
