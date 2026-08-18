@@ -1,0 +1,9 @@
+.vscode
+data/
+logs/
+ImplementationPlan.md
+Rules.md
+AI_Rules.md
+.gitignore
+ToDo/
+endpoints.md
