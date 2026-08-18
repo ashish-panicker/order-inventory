@@ -4,6 +4,8 @@ import com.example.inventory_service.common.dto.ApiResponse;
 import com.example.inventory_service.common.dto.PaginatedResponse;
 import com.example.inventory_service.dto.AddStockRequest;
 import com.example.inventory_service.dto.DeductStockRequest;
+import com.example.inventory_service.dto.RestoreStockRequest;
+import com.example.inventory_service.dto.UpdateStockRequest;
 import com.example.inventory_service.dto.InventoryResponse;
 import com.example.inventory_service.service.InventoryService;
 import jakarta.validation.Valid;
@@ -58,6 +60,22 @@ public class InventoryController {
             @PathVariable String productId,
             @Valid @RequestBody DeductStockRequest request) {
         return ApiResponse.success(inventoryService.deductStock(productId, request));
+    }
+
+    @PutMapping("/{productId}/restore")
+    @Operation(summary = "Restore stock", description = "Restores stock for a product after order cancellation")
+    public ApiResponse<InventoryResponse> restoreStock(
+            @PathVariable String productId,
+            @Valid @RequestBody RestoreStockRequest request) {
+        return ApiResponse.success(inventoryService.restoreStock(productId, request));
+    }
+
+    @PutMapping("/{productId}/add")
+    @Operation(summary = "Add stock quantity", description = "Adds quantity to existing stock for a product")
+    public ApiResponse<InventoryResponse> addStockQuantity(
+            @PathVariable String productId,
+            @Valid @RequestBody UpdateStockRequest request) {
+        return ApiResponse.success(inventoryService.addStockQuantity(productId, request));
     }
 
     @DeleteMapping("/{productId}")

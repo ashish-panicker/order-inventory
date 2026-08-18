@@ -6,6 +6,7 @@ echo "=========================================="
 echo "Starting all-build process"
 echo "=========================================="
 
+"$DIR/build-config-service.sh"
 "$DIR/build-discovery-service.sh"
 "$DIR/build-order-service.sh"
 "$DIR/build-inventory-service.sh"

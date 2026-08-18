@@ -7,3 +7,7 @@ AI_Rules.md
 .gitignore
 ToDo/
 endpoints.md
+order_placement_communication_plan.md
+order_cancellation_communication_plan.md
+order_endpoints.md
+inventory_endpoints.md

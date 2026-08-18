@@ -33,8 +33,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponse placeOrder(CreateOrderRequest request) {
-        // NOTE: Stub for Inter-Service call to deduct stock.
-        // Assuming stock deduction succeeds for now.
+        // TODO: Inter-Service call to inventory-service to deduct stock.
+        // Implementation approach:
+        // 1. Iterate over each item in request.items().
+        // 2. Call PUT http://inventory-service/api/v1/inventory/{productId}/deduct 
+        //    passing a request body like DeductStockRequest(quantity).
+        // 3. Handle exceptions (e.g. 400 Bad Request if insufficient stock) and abort order creation.
+        // 4. For now, we assume stock deduction succeeds synchronously.
 
         List<OrderItemRequest> orderItemRequestList = request.items();
 
@@ -87,8 +92,14 @@ public class OrderServiceImpl implements OrderService {
         }
         
         order.setStatus("CANCELLED");
-        // NOTE: Stub for inventory restoration
         
+        // TODO: Inter-Service call to inventory-service to restore stock.
+        // Implementation approach:
+        // 1. Iterate over each OrderItem in the order's item list.
+        // 2. Call PUT http://inventory-service/api/v1/inventory/{productId}/restore
+        //    passing a request body like RestoreStockRequest(quantity).
+        // 3. Handle potential communication errors (e.g. retry mechanism or dead letter queue).
+        // 4. For now, we assume the inventory restoration succeeds synchronously.
         Order saved = orderRepository.save(order);
         return orderMapper.toResponse(saved);
     }

@@ -3,6 +3,8 @@ package com.example.inventory_service.service.impl;
 import com.example.inventory_service.common.exception.ResourceNotFoundException;
 import com.example.inventory_service.dto.AddStockRequest;
 import com.example.inventory_service.dto.DeductStockRequest;
+import com.example.inventory_service.dto.RestoreStockRequest;
+import com.example.inventory_service.dto.UpdateStockRequest;
 import com.example.inventory_service.dto.InventoryResponse;
 import com.example.inventory_service.entity.InventoryItem;
 import com.example.inventory_service.mapper.InventoryMapper;
@@ -67,6 +69,42 @@ public class InventoryServiceImpl implements InventoryService {
         }
 
         item.setQuantity(item.getQuantity() - request.quantity());
+        item.setInStock(item.getQuantity() > 0);
+
+        InventoryItem saved = inventoryRepository.save(item);
+        return inventoryMapper.toResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public InventoryResponse restoreStock(String productId, RestoreStockRequest request) {
+        InventoryItem item = inventoryRepository.findByProductId(productId)
+                .orElseGet(() -> {
+                    InventoryItem newItem = new InventoryItem();
+                    newItem.setProductId(productId);
+                    newItem.setQuantity(0);
+                    return newItem;
+                });
+
+        item.setQuantity(item.getQuantity() + request.quantity());
+        item.setInStock(item.getQuantity() > 0);
+
+        InventoryItem saved = inventoryRepository.save(item);
+        return inventoryMapper.toResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public InventoryResponse addStockQuantity(String productId, UpdateStockRequest request) {
+        InventoryItem item = inventoryRepository.findByProductId(productId)
+                .orElseGet(() -> {
+                    InventoryItem newItem = new InventoryItem();
+                    newItem.setProductId(productId);
+                    newItem.setQuantity(0);
+                    return newItem;
+                });
+
+        item.setQuantity(item.getQuantity() + request.quantity());
         item.setInStock(item.getQuantity() > 0);
 
         InventoryItem saved = inventoryRepository.save(item);
