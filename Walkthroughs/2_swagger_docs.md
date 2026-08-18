@@ -9,7 +9,7 @@ Add the Springdoc OpenAPI dependency to your `pom.xml`. This library automatical
 <dependency>
     <groupId>org.springdoc</groupId>
     <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    <version>2.5.0</version> <!-- Use the latest version -->
+    <version>3.1.0</version>
 </dependency>
 ```
 
