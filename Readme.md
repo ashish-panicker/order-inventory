@@ -2,9 +2,10 @@
 
 This repository serves as a practical learning project to explore and implement concepts related to Microservices Architecture, Inter-service Communication, Microservice Design Patterns, and standard REST API development practices.
 
-The project is structured around two core services:
+The project is structured around the following services:
 * **Order Service**: Manages customer orders.
 * **Inventory Service**: Manages product stock and availability.
+* **Discovery Service**: A Netflix Eureka Service Registry that allows microservices to dynamically discover each other.
 
 ---
 
@@ -20,21 +21,34 @@ Microservices Architecture is an approach to developing a single application as 
 
 ---
 
-## 2. Microservice Design Patterns
+## 2. Microservice Design Patterns & Features (Implemented)
 
-This project aims to demonstrate several key microservice design patterns:
+This project demonstrates several key microservice design patterns and libraries:
 
 ### Database per Service
 * **Concept**: Each service has its own private database, inaccessible directly by other services.
-* **Implementation**: `order-service` has an Order DB; `inventory-service` has an Inventory DB.
-
-### API Gateway (Optional/Future Enhancement)
-* **Concept**: A single point of entry for all clients. It routes requests to the appropriate microservice.
-* **Benefits**: Simplifies client code, allows for centralized cross-cutting concerns (authentication, rate limiting).
+* **Implementation**: `order-service` has an Order DB; `inventory-service` has an Inventory DB. Both run as MySQL containers via Docker Compose.
 
 ### Service Discovery (Discovery Server)
 * **Concept**: A centralized registry where microservices register themselves and discover other services dynamically.
-* **Use Case**: `order-service` queries the Discovery Server (e.g., Eureka/Consul) to find the location (IP/Port) of `inventory-service` instead of hardcoding URLs.
+* **Implementation**: `discovery-service` is an embedded Netflix Eureka Server. `order-service` and `inventory-service` act as Eureka Clients to register themselves and resolve IPs/Ports dynamically instead of hardcoding URLs.
+
+### API Documentation (Swagger / OpenAPI)
+* **Implementation**: Integrated `springdoc-openapi-starter-webmvc-ui` in the services to automatically generate interactive API documentation. 
+* Accessible at: `http://localhost:<service-port>/swagger-ui.html`
+
+### Object Mapping (MapStruct)
+* **Implementation**: Used MapStruct for high-performance, type-safe mapping between Entities and DTOs to ensure clean boundaries between the persistence layer and the presentation layer.
+
+---
+
+## 3. Future Enhancements
+
+These patterns and features are planned for future iterations:
+
+### API Gateway
+* **Concept**: A single point of entry for all clients. It routes requests to the appropriate microservice.
+* **Benefits**: Simplifies client code, allows for centralized cross-cutting concerns (authentication, rate limiting).
 
 ### Centralized Configuration (Config Server)
 * **Concept**: Externalizes configuration for all microservices into a centralized repository (e.g., Git).
@@ -42,21 +56,11 @@ This project aims to demonstrate several key microservice design patterns:
 
 ### Circuit Breaker Pattern
 * **Concept**: Prevents an application from repeatedly trying to execute an operation that's likely to fail.
-* **Use Case**: If `inventory-service` is down, `order-service` should fail fast instead of hanging and exhausting resources.
-
----
-
-## 3. Inter-Service Communication
-
-Microservices can communicate synchronously or asynchronously.
-
-### Synchronous Communication (REST/HTTP)
-* **Pattern**: Request/Response. The client sends a request and waits for a response.
-* **Use Case in Project**: The `order-service` makes a synchronous HTTP call to the `inventory-service` to check stock availability before confirming an order. (Note: In a highly resilient system, asynchronous communication is often preferred for core workflows).
+* **Use Case**: If `inventory-service` is down, `order-service` should fail fast instead of hanging and exhausting resources (e.g., using Resilience4j).
 
 ### Asynchronous Communication (Message Broker - e.g., RabbitMQ, Kafka)
 * **Pattern**: Event-Driven. Services publish events when state changes, and other services subscribe to those events.
-* **Future Enhancement**: Instead of synchronous HTTP calls, `order-service` could publish an `OrderCreated` event. `inventory-service` consumes it, reserves stock, and publishes `InventoryReserved` or `InventoryFailed` events.
+* **Use Case**: Instead of synchronous HTTP calls, `order-service` could publish an `OrderCreated` event. `inventory-service` consumes it, reserves stock, and publishes `InventoryReserved` or `InventoryFailed` events.
 
 ---
 
@@ -219,7 +223,7 @@ Manages the lifecycle of customer orders.
   * `201 Created`: Order placed successfully and stock reserved. Response includes new `orderId` wrapped in the Common Success Schema.
 * **Error Responses**:
   * `400 Bad Request`: Invalid payload or insufficient stock (propagated from Inventory service).
-  * `503 Service Unavailable`: Inventory service is unreachable (Circuit Breaker opened).
+  * `503 Service Unavailable`: Inventory service is unreachable.
 
 #### 2. Get Order Details
 * **Endpoint**: `GET /api/v1/orders/{orderId}`
@@ -274,11 +278,10 @@ Manages the lifecycle of customer orders.
 
 1. **Client** sends `POST /api/v1/orders` to `order-service`.
 2. `order-service` validates the request payload.
-3. `order-service` acts as an HTTP client and sends a synchronous `GET /api/v1/inventory/{productId}` request to `inventory-service` to check stock availability, followed by a `PUT /api/v1/inventory/{productId}/deduct` to reserve the stock.
+3. `order-service` acts as an HTTP client and sends a synchronous `GET /api/v1/inventory/{productId}` request to `inventory-service` (resolved via `discovery-service`) to check stock availability, followed by a `PUT /api/v1/inventory/{productId}/deduct` to reserve the stock.
 4. `inventory-service` processes the requests:
    * **If stock is sufficient and updated successfully**: Returns `200 OK`. `order-service` saves the order to its DB with status `CONFIRMED` and returns `201 Created` to the client.
    * **If insufficient stock or product not found**: Returns `400 Bad Request` or `404 Not Found`. `order-service` aborts the order and returns the corresponding error to the client.
-   * **If down/timeout**: `order-service`'s Circuit Breaker trips. `order-service` returns `503 Service Unavailable` and does not persist the order.
 
 ---
 
