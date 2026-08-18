@@ -232,3 +232,6 @@ public OpenAPI customOpenAPI() {
 - **Use DTOs:** Always return DTOs rather than raw entities, and annotate the DTOs with `@Schema` (or standard JSR-380 Validation annotations) for clean documentation.
 - **Centralize Security:** Define security schemes globally in your `@Configuration` class and apply them using `@SecurityRequirement`.
 - **Don't expose sensitive info:** Use `@Hidden` to hide internal or deprecated APIs that shouldn't be consumed by external clients.
+
+## 6. References
+- [Spring REST OpenAPI Documentation (Baeldung)](https://www.baeldung.com/spring-rest-openapi-documentation)
