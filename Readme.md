@@ -303,3 +303,12 @@ volumes:
 * **On Non-SELinux systems (Windows, macOS, Ubuntu, Debian):** Docker simply ignores the `:z` flag. It causes no harm and behaves identically to a standard volume mount.
 
 By including the `:z` flag, the `docker-compose.yml` remains truly cross-platform. It acts as a safety net for Linux environments while remaining completely transparent to developers on Windows or Mac.
+
+---
+
+## 7. Documentation and Notes
+
+We maintain additional documentation and notes for various technologies used in this project under the `notes/` directory:
+
+* **[Swagger & OpenAPI Notes](./notes/swagger_notes.md)**: A comprehensive guide on documenting the REST APIs using Springdoc OpenAPI, including common annotations, configurations, global exception handling, and best practices.
+* **[MapStruct Documentation](./notes/MapStruct_Documentation.md)**: Documentation on how MapStruct is utilized in the project for efficient object mapping between Entities and DTOs.
