@@ -8,5 +8,6 @@ This folder contains step-by-step guides (walkthroughs) designed to help learner
 2. **[Adding Swagger/OpenAPI](2_swagger_docs.md)**: A guide to documenting REST APIs using the `springdoc-openapi` library.
 3. **[Spring Boot Actuator](3_spring_boot_actuator.md)**: Instructions on adding and configuring Actuator for application monitoring and health checks.
 4. **[Eureka Discovery Server & Clients](4_eureka_discovery.md)**: Steps to set up a standalone Eureka Service Registry and configure other microservices to register as clients.
+5. **[Spring Cloud Config Server & Client](spring-cloud-config.md)**: A step-by-step walkthrough on setting up Spring Cloud Config Server, connecting it to Git, and configuring a client.
 
 Feel free to use these guides when creating new services or improving existing ones!

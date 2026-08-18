@@ -6,6 +6,7 @@ The project is structured around the following services:
 * **Order Service**: Manages customer orders.
 * **Inventory Service**: Manages product stock and availability.
 * **Discovery Service**: A Netflix Eureka Service Registry that allows microservices to dynamically discover each other.
+* **Config Service**: A Spring Cloud Config Server that provides centralized configuration management backed by Git.
 
 ---
 
@@ -40,6 +41,10 @@ This project demonstrates several key microservice design patterns and libraries
 ### Object Mapping (MapStruct)
 * **Implementation**: Used MapStruct for high-performance, type-safe mapping between Entities and DTOs to ensure clean boundaries between the persistence layer and the presentation layer.
 
+### Centralized Configuration (Config Server)
+* **Concept**: Externalizes configuration for all microservices into a centralized repository (e.g., Git).
+* **Implementation**: `config-service` acts as a Spring Cloud Config Server connected to a Git repository to serve configurations. Services fetch their configuration dynamically on startup.
+
 ---
 
 ## 3. Future Enhancements
@@ -49,10 +54,6 @@ These patterns and features are planned for future iterations:
 ### API Gateway
 * **Concept**: A single point of entry for all clients. It routes requests to the appropriate microservice.
 * **Benefits**: Simplifies client code, allows for centralized cross-cutting concerns (authentication, rate limiting).
-
-### Centralized Configuration (Config Server)
-* **Concept**: Externalizes configuration for all microservices into a centralized repository (e.g., Git).
-* **Use Case**: Properties like database credentials, feature toggles, and timeouts are managed by a Config Server and pulled dynamically by services at startup or runtime.
 
 ### Circuit Breaker Pattern
 * **Concept**: Prevents an application from repeatedly trying to execute an operation that's likely to fail.
@@ -315,3 +316,6 @@ We maintain additional documentation and notes for various technologies used in 
 
 * **[Swagger & OpenAPI Notes](./notes/swagger_notes.md)**: A comprehensive guide on documenting the REST APIs using Springdoc OpenAPI, including common annotations, configurations, global exception handling, and best practices.
 * **[MapStruct Documentation](./notes/MapStruct_Documentation.md)**: Documentation on how MapStruct is utilized in the project for efficient object mapping between Entities and DTOs.
+* **[Spring Cloud Config Notes](./notes/config-server.md)**: Detailed notes on the Spring Cloud Config Server, covering core concepts, architecture, and security considerations.
+
+You can also find step-by-step implementation guides in the [Walkthroughs/](./Walkthroughs/README.md) directory.

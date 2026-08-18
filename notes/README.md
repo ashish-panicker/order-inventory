@@ -6,6 +6,7 @@ This directory contains detailed technical documentation, best practices, and le
 
 * **[Swagger & OpenAPI Notes](swagger_notes.md)**: A comprehensive guide on setting up and documenting Spring Boot REST APIs using Springdoc OpenAPI. It covers configuration, most-used annotations (`@Tag`, `@Operation`, etc.), and global exception handling strategies.
 * **[MapStruct Documentation](MapStruct_Documentation.md)**: Details on how MapStruct is configured in the project to provide high-performance, type-safe object mapping between JPA Entities and Data Transfer Objects (DTOs).
+* **[Spring Cloud Config Server](config-server.md)**: Detailed notes on Spring Cloud Config Server covering concepts, architecture, and security.
 
 ## Purpose
 
